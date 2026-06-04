@@ -56,9 +56,25 @@ async function apiPost(payload) {
 
   });
 
-  if (!res.ok) throw new Error('API error ' + res.status);
+  const text = await res.text();
 
-  return res.json();
+  let data;
+
+  try {
+
+    data = JSON.parse(text);
+
+  } catch {
+
+    throw new Error('API response parse error');
+
+  }
+
+  if (!res.ok) throw new Error((data && data.error) || 'API error ' + res.status);
+
+  if (data && data.success === false) throw new Error(data.error || 'API failed');
+
+  return data;
 
 }
 
@@ -518,17 +534,87 @@ async function adminDeleteCoupon(id) {
 
 
 
-async function adminUploadImage(file) {
+async function compressImageForUpload(file, maxDim = 1200, quality = 0.82) {
 
-  const base64 = await fileToBase64(file);
+  if (!file.type || !file.type.startsWith('image/') || file.size <= 400000) return file;
 
-  if (hasBackend()) {
+  const bmp = await createImageBitmap(file);
 
-    return apiPost({ action: 'uploadImage', token: getAdminToken(), filename: file.name, mimeType: file.type, base64 });
+  let w = bmp.width;
+
+  let h = bmp.height;
+
+  if (w > maxDim || h > maxDim) {
+
+    if (w >= h) {
+
+      h = Math.round((h * maxDim) / w);
+
+      w = maxDim;
+
+    } else {
+
+      w = Math.round((w * maxDim) / h);
+
+      h = maxDim;
+
+    }
 
   }
 
-  return { success: true, url: 'data:' + file.type + ';base64,' + base64 };
+  const canvas = document.createElement('canvas');
+
+  canvas.width = w;
+
+  canvas.height = h;
+
+  canvas.getContext('2d').drawImage(bmp, 0, 0, w, h);
+
+  bmp.close();
+
+  const blob = await new Promise((resolve, reject) => {
+
+    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('ছবি কম্প্রেস ব্যর্থ'))), 'image/jpeg', quality);
+
+  });
+
+  const name = (file.name || 'image').replace(/\.[^.]+$/, '') + '.jpg';
+
+  return new File([blob], name, { type: 'image/jpeg' });
+
+}
+
+
+
+async function adminUploadImage(file) {
+
+  const prepared = await compressImageForUpload(file);
+
+  const base64 = await fileToBase64(prepared);
+
+  if (hasBackend()) {
+
+    const result = await apiPost({
+
+      action: 'uploadImage',
+
+      token: getAdminToken(),
+
+      filename: prepared.name,
+
+      mimeType: prepared.type || 'image/jpeg',
+
+      base64
+
+    });
+
+    if (!result.url) throw new Error(result.error || 'ছবির URL পাওয়া যায়নি');
+
+    return result;
+
+  }
+
+  return { success: true, url: 'data:' + (prepared.type || 'image/jpeg') + ';base64,' + base64 };
 
 }
 

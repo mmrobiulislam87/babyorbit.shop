@@ -229,8 +229,8 @@ function getSettings() {
     facebookPixelId: settings.facebookPixelId || '',
     whatsappBusiness: settings.whatsappBusiness || '',
     whatsappNotify: settings.whatsappNotify || settings.hotlineTel || '',
-    ogImage: settings.ogImage || '',
-    logo: settings.logo || '',
+    ogImage: normalizeDriveImageUrl(settings.ogImage || ''),
+    logo: normalizeDriveImageUrl(settings.logo || ''),
     logoVersion: settings.logoVersion || ''
   };
 }
@@ -259,12 +259,18 @@ function getProducts() {
     if (String(data[i][7]).toLowerCase() !== 'yes') continue;
     var variants = [];
     if (data[i][10]) {
-      try { variants = JSON.parse(String(data[i][10])) || []; } catch (e) { variants = []; }
+      try {
+        variants = JSON.parse(String(data[i][10])) || [];
+        variants = variants.map(function(v) {
+          if (v && v.image) v.image = normalizeDriveImageUrl(v.image);
+          return v;
+        });
+      } catch (e) { variants = []; }
     }
     products.push({
       id: data[i][0], categoryId: data[i][1], name: data[i][2],
       originalPrice: Number(data[i][3]), offerPrice: Number(data[i][4]),
-      image: data[i][5], rating: Number(data[i][6]) || 5,
+      image: normalizeDriveImageUrl(data[i][5]), rating: Number(data[i][6]) || 5,
       sortOrder: Number(data[i][8]) || i,
       description: data[i][9] ? String(data[i][9]) : '',
       variants: variants,
@@ -480,20 +486,45 @@ function handleDeleteCoupon(data) {
 function handleUploadImage(data) {
   if (!data.base64 || !data.filename) throw new Error('Image data missing');
 
-  var folder = getOrCreateImageFolder();
-  var mime = data.mimeType || 'image/jpeg';
-  var blob = Utilities.newBlob(Utilities.base64Decode(data.base64), mime, data.filename);
-  var file = folder.createFile(blob);
-  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  try {
+    var folder = getOrCreateImageFolder();
+    var mime = data.mimeType || 'image/jpeg';
+    var blob = Utilities.newBlob(Utilities.base64Decode(data.base64), mime, data.filename);
+    var file = folder.createFile(blob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
-  var url = 'https://drive.google.com/uc?export=view&id=' + file.getId();
-  return jsonResponse({ success: true, url: url });
+    var id = file.getId();
+    // thumbnail/lh3 work in <img> on external sites; uc?export=view often breaks
+    var url = 'https://drive.google.com/thumbnail?id=' + id + '&sz=w1200';
+    return jsonResponse({ success: true, url: url, fileId: id });
+  } catch (e) {
+    var msg = String(e.message || e);
+    if (msg.indexOf('authorization') !== -1 || msg.indexOf('Authorization') !== -1) {
+      throw new Error('Google Drive অনুমতি দরকার — Apps Script-এ authorizeDriveForUploads() একবার Run করুন');
+    }
+    throw e;
+  }
+}
+
+/** Apps Script Editor → Run once → Allow Drive access (image upload) */
+function authorizeDriveForUploads() {
+  var f = getOrCreateImageFolder();
+  Logger.log('Drive folder OK: ' + f.getName());
 }
 
 function getOrCreateImageFolder() {
   var folders = DriveApp.getFoldersByName(IMAGE_FOLDER_NAME);
   if (folders.hasNext()) return folders.next();
   return DriveApp.createFolder(IMAGE_FOLDER_NAME);
+}
+
+/** Fix old Drive links so images show on babyorbit.shop */
+function normalizeDriveImageUrl(url) {
+  if (!url) return '';
+  var s = String(url);
+  var m = s.match(/(?:[?&]id=|\/d\/)([a-zA-Z0-9_-]+)/);
+  if (!m || s.indexOf('drive.google') === -1 && s.indexOf('googleusercontent') === -1) return s;
+  return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1200';
 }
 
 // ─── Orders ──────────────────────────────────────────────────

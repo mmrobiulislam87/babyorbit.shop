@@ -804,7 +804,7 @@ function bindEvents() {
       const preview = document.getElementById('product-image-preview');
       preview.src = result.url;
       preview.classList.remove('hidden');
-      showToast('ছবি আপলোড হয়েছে ✅');
+      showToast('ছবি আপলোড হয়েছে — এখন **সেভ** চাপুন ✅');
     } catch (err) {
       alert('ছবি আপলোড ব্যর্থ: ' + err.message);
     }
@@ -823,7 +823,7 @@ function bindEvents() {
       img.src = result.url;
       img.classList.remove('hidden');
       document.getElementById('logo-placeholder').classList.add('hidden');
-      showToast('লোগো প্রস্তুত — সেভ করুন ✅');
+      showToast('লোগো আপলোড হয়েছে — সেটিংসে **সেভ** চাপুন ✅');
     } catch (err) {
       alert('লোগো আপলোড ব্যর্থ: ' + err.message);
     }
