@@ -2,11 +2,12 @@
  * Baby Orbit — Full Backend (Orders + Admin + Store)
  *
  * Script Properties (Project Settings):
+ *   SPREADSHEET_ID  = Google Sheet ID (URL-এর মাঝের অংশ) — Web App-এর জন্য অবশ্যই
  *   ADMIN_PASSWORD  = your-secret-password
  *   WHATSAPP_PHONE  = 8801812345678
  *   CALLMEBOT_KEY   = callmebot-api-key
  *
- * Run once: setupAllSheets()
+ * Run once: linkSpreadsheetFromActive() অথবা setupAllSheets()
  * Deploy: Web app → Anyone
  */
 
@@ -629,15 +630,54 @@ function sendWhatsApp(message) {
 
 // ─── Helpers ─────────────────────────────────────────────────
 
+function getSpreadsheet() {
+  var props = PropertiesService.getScriptProperties();
+  var id = (props.getProperty('SPREADSHEET_ID') || '').trim();
+  if (id) {
+    try {
+      return SpreadsheetApp.openById(id);
+    } catch (e) {
+      throw new Error('SPREADSHEET_ID ভুল — Sheet URL থেকে ID ঠিক করে Script Properties-এ দিন');
+    }
+  }
+  var active = SpreadsheetApp.getActiveSpreadsheet();
+  if (active) return active;
+  throw new Error(
+    'Google Sheet লিংক নেই। Sheet খুলে Extensions → Apps Script → linkSpreadsheetFromActive() Run করুন, ' +
+    'অথবা Script Properties-এ SPREADSHEET_ID সেট করুন'
+  );
+}
+
+/**
+ * একবার Run করুন — আপনার Sheet-এর ID Script Properties-এ সেভ হবে + ট্যাব তৈরি
+ * (Sheet খোলা অবস্থায় Apps Script Editor থেকে)
+ */
+function linkSpreadsheetFromActive() {
+  var active = SpreadsheetApp.getActiveSpreadsheet();
+  if (!active) {
+    throw new Error('প্রথমে Google Sheet খুলুন, তারপর Sheet → Extensions → Apps Script থেকে Run করুন');
+  }
+  PropertiesService.getScriptProperties().setProperty('SPREADSHEET_ID', active.getId());
+  setupAllSheets();
+  Logger.log('SPREADSHEET_ID সেভ হয়েছে: ' + active.getId());
+  Logger.log('Sheet URL: ' + active.getUrl());
+}
+
 function getOrCreateSheet(name) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var ss = getSpreadsheet();
   var sheet = ss.getSheetByName(name);
   if (!sheet) sheet = ss.insertSheet(name);
   return sheet;
 }
 
 function getSheet(name) {
-  return SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name);
+  var sheet = getSpreadsheet().getSheetByName(name);
+  if (!sheet) {
+    setupAllSheets();
+    sheet = getSpreadsheet().getSheetByName(name);
+  }
+  if (!sheet) throw new Error('Sheet "' + name + '" পাওয়া যায়নি — setupAllSheets() Run করুন');
+  return sheet;
 }
 
 function getProductRowById(productId) {
