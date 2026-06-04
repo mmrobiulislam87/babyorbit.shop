@@ -11,10 +11,10 @@
     "deploy": "wrangler deploy"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=18 <=22"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.17",
-    "wrangler": "^4.98.0"
+    "wrangler": "3.114.1"
   }
 }

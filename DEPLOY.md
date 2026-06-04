@@ -48,6 +48,7 @@ npm run deploy
 
 ## ৬. সমস্যা হলে
 
+- **`Wrangler requires Node.js v22`:** প্রজেক্টে `wrangler@3.114.1` পিন করা — Cloudflare Node 20-এ deploy চলবে (retry deploy)
 - **Build fail:** log-এ `GOOGLE_SCRIPT_URL missing` → variable যোগ করুন বা `config.defaults.js` চেক করুন
 - **Deploy fail / project not found:** `wrangler.toml`-এ `name = "babyorbitshops"` Cloudflare project name-এর সাথে মিলুন
 - **সাইট খালি / API কাজ না:** Browser → `js/config.js` খুলে `googleScriptUrl` আছে কিনা দেখুন
