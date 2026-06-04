@@ -8,7 +8,8 @@ const root = path.join(__dirname, '..');
 const dist = path.join(root, 'dist');
 
 const copyDirs = ['admin', 'css', 'js'];
-const copyFiles = ['index.html', '_redirects', 'robots.txt', 'sitemap.xml', 'favicon.svg'];
+// _redirects is Pages-only; Workers use workers-site.js for routing
+const copyFiles = ['index.html', 'robots.txt', 'sitemap.xml', 'favicon.svg'];
 
 if (fs.existsSync(dist)) {
   fs.rmSync(dist, { recursive: true, force: true });

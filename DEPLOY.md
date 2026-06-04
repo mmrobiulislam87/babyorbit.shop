@@ -42,3 +42,4 @@ Cloudflare প্রজেক্ট: **`babyorbitshopb`** (Worker + static asset
 | No URLs enabled | Domains → workers.dev Enable |
 | Asset too large (workerd 111 MiB) | `dist/` শুধু সাইট ফাইল — `node_modules` deploy হয় না |
 | Worker name mismatch | `wrangler.toml` → `babyorbitshopb` (CI নামের সাথে মিল) |
+| Invalid _redirects infinite loop | `_redirects` dist-এ যায় না; routing `workers-site.js`-এ |
