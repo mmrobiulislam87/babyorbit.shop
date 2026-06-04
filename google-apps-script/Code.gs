@@ -18,6 +18,12 @@ var SHEET_SETTINGS = 'Settings';
 var SHEET_COUPONS = 'Coupons';
 var IMAGE_FOLDER_NAME = 'BabyShopImages';
 
+/**
+ * Google Sheet ID — URL-এ /d/ এর পর যে কোড (শুধু Script Properties না থাকলে এটা ব্যবহার হয়)
+ * উদাহরণ: https://docs.google.com/spreadsheets/d/1abc...xyz/edit → ID = 1abc...xyz
+ */
+var CONFIG_SPREADSHEET_ID = '';
+
 var GRADIENTS = [
   'from-red-400 to-orange-500',
   'from-yellow-400 to-amber-500',
@@ -633,6 +639,7 @@ function sendWhatsApp(message) {
 function getSpreadsheet() {
   var props = PropertiesService.getScriptProperties();
   var id = (props.getProperty('SPREADSHEET_ID') || '').trim();
+  if (!id) id = String(CONFIG_SPREADSHEET_ID || '').trim();
   if (id) {
     try {
       return SpreadsheetApp.openById(id);
@@ -649,8 +656,22 @@ function getSpreadsheet() {
 }
 
 /**
- * একবার Run করুন — আপনার Sheet-এর ID Script Properties-এ সেভ হবে + ট্যাব তৈরি
- * (Sheet খোলা অবস্থায় Apps Script Editor থেকে)
+ * সবচেয়ে সহজ — Sheet ID Code.gs-এ বসিয়ে এই ফাংশন Run করুন
+ * ১) CONFIG_SPREADSHEET_ID = "আপনার_ID" লিখুন → Save (Ctrl+S)
+ * ২) connectMySheet → Run → Allow
+ */
+function connectMySheet() {
+  var id = String(CONFIG_SPREADSHEET_ID || '').trim();
+  if (!id) {
+    throw new Error('Code.gs-এ CONFIG_SPREADSHEET_ID = "Sheet_ID" লিখুন (ফাইলের উপরে IMAGE_FOLDER_NAME-এর নিচে)');
+  }
+  PropertiesService.getScriptProperties().setProperty('SPREADSHEET_ID', id);
+  setupAllSheets();
+  Logger.log('সফল — Sheet যুক্ত হয়েছে। এখন Deploy → New version করুন।');
+}
+
+/**
+ * Sheet খোলা থাকলে — Extensions → Apps Script থেকে Run
  */
 function linkSpreadsheetFromActive() {
   var active = SpreadsheetApp.getActiveSpreadsheet();
