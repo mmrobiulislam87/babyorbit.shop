@@ -7,7 +7,7 @@
 | ফিল্ড | মান |
 |--------|-----|
 | Build command | `npm install && npm run build` |
-| Deploy command | `npx wrangler deploy` |
+| Deploy command | `npx wrangler pages deploy . --project-name=babyorbitshops` |
 | Root / Path | `/` |
 
 **Environment variables** (Settings → Variables):
@@ -44,11 +44,13 @@ npm install
 npm run build
 npx wrangler login
 npm run deploy
+# same as: npx wrangler pages deploy . --project-name=babyorbitshops
 ```
 
 ## ৬. সমস্যা হলে
 
-- **`Wrangler requires Node.js v22`:** প্রজেক্টে `wrangler@3.114.1` পিন করা — Cloudflare Node 20-এ deploy চলবে (retry deploy)
+- **`Workers-specific command in a Pages project`:** Deploy command অবশ্যই `npx wrangler pages deploy . --project-name=babyorbitshops` (`wrangler deploy` নয়)
+- **`Wrangler requires Node.js v22`:** প্রজেক্টে `wrangler@3.114.1` পিন করা — Cloudflare Node 20-এ deploy চলবে
 - **Build fail:** log-এ `GOOGLE_SCRIPT_URL missing` → variable যোগ করুন বা `config.defaults.js` চেক করুন
 - **Deploy fail / project not found:** `wrangler.toml`-এ `name = "babyorbitshops"` Cloudflare project name-এর সাথে মিলুন
 - **সাইট খালি / API কাজ না:** Browser → `js/config.js` খুলে `googleScriptUrl` আছে কিনা দেখুন

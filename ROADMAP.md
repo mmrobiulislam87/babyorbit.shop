@@ -144,7 +144,7 @@
 - [x] `scripts/generate-config.js` + `js/config.defaults.js` — Cloudflare build-এ `config.js` অটো
 - [x] `wrangler.toml` → `babyorbitshops` + `npm run deploy`
 - [x] `DEPLOY.md` — Cloudflare Build/Deploy কমান্ড ও env vars
-- [ ] Cloudflare: Build `npm install && npm run build`, Deploy `npx wrangler deploy`, env `ADMIN_PASSWORD` (encrypt)
+- [ ] Cloudflare: Build `npm install && npm run build`, Deploy `npx wrangler pages deploy . --project-name=babyorbitshops`, env `ADMIN_PASSWORD` (encrypt)
 - [ ] Custom domain `babyorbit.shop`
 - [ ] Google Apps Script **নতুন Deploy** (Code.gs আপডেট হয়েছে)
 - [ ] Script Properties: `ADMIN_PASSWORD`, `CALLMEBOT_KEY`, `WHATSAPP_PHONE`
