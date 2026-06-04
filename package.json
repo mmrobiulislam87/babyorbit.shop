@@ -8,7 +8,7 @@
     "build:css": "tailwindcss -i ./css/input.css -o ./css/tailwind.css --minify",
     "watch:css": "tailwindcss -i ./css/input.css -o ./css/tailwind.css --watch",
     "build": "npm run generate-config && npm run build:css",
-    "deploy": "wrangler pages deploy . --project-name=babyorbitshops"
+    "deploy": "wrangler deploy"
   },
   "engines": {
     "node": ">=18 <=22"

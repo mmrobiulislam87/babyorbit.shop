@@ -15,6 +15,7 @@ desktop.ini
 # Node / build tooling
 node_modules/
 .wrangler/
+.dev.vars
 
 # Logs
 *.log

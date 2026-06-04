@@ -1,3 +1,7 @@
-name = "babyorbitshops"
+name = "babyorbitshop"
 compatibility_date = "2024-01-01"
-pages_build_output_dir = "."
+main = "workers-site.js"
+
+[assets]
+binding = "ASSETS"
+directory = "."

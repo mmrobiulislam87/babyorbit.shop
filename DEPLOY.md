@@ -1,56 +1,42 @@
-# Baby Orbit — Cloudflare Deploy (শেষ ধাপ)
+# Baby Orbit — Cloudflare Deploy
 
-## ১. Cloudflare Dashboard — সঠিক মান
+Cloudflare প্রজেক্ট: **`babyorbitshop`** (Worker + static assets)
 
-**Workers & Pages** → আপনার প্রজেক্ট (`babyorbitshops`) → **Settings** → **Build**
+## Build settings (Git)
 
 | ফিল্ড | মান |
 |--------|-----|
 | Build command | `npm install && npm run build` |
-| Deploy command | `npx wrangler pages deploy . --project-name=babyorbitshops` |
-| Root / Path | `/` |
+| Deploy command | `npx wrangler deploy` |
+| Path | `/` |
 
-**Environment variables** (Settings → Variables):
+## API token — Authentication error [10000] ঠিক করুন
 
-| Name | Value | Encrypt |
-|------|--------|---------|
-| `GOOGLE_SCRIPT_URL` | Apps Script Web App URL | No |
-| `ADMIN_PASSWORD` | আপনার admin পাসওয়ার্ড (Script Properties-এর মতো) | **Yes** |
+লগে `CLOUDFLARE_API_TOKEN` থাকলে পুরনো/ভুল token — **মুছে দিন:**
 
-`GOOGLE_SCRIPT_URL` না দিলেও `js/config.defaults.js` থেকে URL নেবে।
+1. **Settings → Variables** → `CLOUDFLARE_API_TOKEN` **Delete**
+2. **Settings → Build → API token** → **+ Create new token** (অটো) — `zeniusanalyzerpro` বা অন্য প্রজেক্টের token **নয়**
+3. নতুন token-এ অন্তত: **Workers Scripts — Edit**, **Account — Read**
 
-## ২. API token
+`wrangler pages deploy` **ব্যবহার করবেন না** — আপনার প্রজেক্ট Worker; deploy = `wrangler deploy`।
 
-- **+ Create new token** (অটো) — ঠিক আছে
-- অন্য প্রজেক্টের token (zeniusanalyzerpro) **ব্যবহার করবেন না**
+## সাইট URL চালু করুন
 
-## ৩. Custom domain
+1. **Domains** ট্যাব → **workers.dev** → **Enable**
+2. URL: `https://babyorbitshop.<subdomain>.workers.dev`
+3. **Custom domain:** `babyorbit.shop` যোগ করুন
 
-প্রজেক্ট → **Custom domains** → `babyorbit.shop` যোগ করুন।
+## Environment variables
 
-## ৪. Git push
+| Name | Encrypt |
+|------|---------|
+| `ADMIN_PASSWORD` | Yes |
+| `GOOGLE_SCRIPT_URL` | No (ঐচ্ছিক — `js/config.defaults.js`-এ আছে) |
 
-কোড push হলে Cloudflare অটো deploy চালাবে। Build log-এ দেখবেন:
+## সমস্যা
 
-```
-generate-config: wrote js/config.js
-Done in ...ms (tailwind)
-```
-
-## ৫. লোকাল deploy (ঐচ্ছিক)
-
-```bash
-npm install
-npm run build
-npx wrangler login
-npm run deploy
-# same as: npx wrangler pages deploy . --project-name=babyorbitshops
-```
-
-## ৬. সমস্যা হলে
-
-- **`Workers-specific command in a Pages project`:** Deploy command অবশ্যই `npx wrangler pages deploy . --project-name=babyorbitshops` (`wrangler deploy` নয়)
-- **`Wrangler requires Node.js v22`:** প্রজেক্টে `wrangler@3.114.1` পিন করা — Cloudflare Node 20-এ deploy চলবে
-- **Build fail:** log-এ `GOOGLE_SCRIPT_URL missing` → variable যোগ করুন বা `config.defaults.js` চেক করুন
-- **Deploy fail / project not found:** `wrangler.toml`-এ `name = "babyorbitshops"` Cloudflare project name-এর সাথে মিলুন
-- **সাইট খালি / API কাজ না:** Browser → `js/config.js` খুলে `googleScriptUrl` আছে কিনা দেখুন
+| Error | সমাধান |
+|-------|---------|
+| Authentication error 10000 | Variables থেকে `CLOUDFLARE_API_TOKEN` মুছুন; Build-এ নতুন auto token |
+| Pages project failed | Deploy command `npx wrangler deploy` (pages deploy নয়) |
+| No URLs enabled | Domains → workers.dev Enable |
