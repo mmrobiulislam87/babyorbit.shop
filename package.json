@@ -4,11 +4,17 @@
   "version": "1.0.0",
   "description": "Baby Orbit storefront + admin (Tailwind production build)",
   "scripts": {
+    "generate-config": "node scripts/generate-config.js",
     "build:css": "tailwindcss -i ./css/input.css -o ./css/tailwind.css --minify",
     "watch:css": "tailwindcss -i ./css/input.css -o ./css/tailwind.css --watch",
-    "build": "npm run build:css"
+    "build": "npm run generate-config && npm run build:css",
+    "deploy": "wrangler deploy"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "wrangler": "^4.98.0"
   }
 }

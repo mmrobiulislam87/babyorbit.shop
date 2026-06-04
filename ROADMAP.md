@@ -141,11 +141,12 @@
 - **অপশনাল:** Cloudflare Pages-এ Build command `npm run build:css`, Output `/` দিলে অটো-বিল্ড হবে
 
 ### Deploy (আপনার কাজ)
-- [ ] `js/config.example.js` → `config.js` কপি
-- [ ] Git init + GitHub push (`node_modules/` ignore হয়, `css/tailwind.css` কমিট হয়)
-- [ ] Cloudflare Pages connect + `babyorbit.shop` ডোমেইন
-- [ ] Google Apps Script **নতুন Deploy** (Code.gs আপডেট হয়েছে — `logo`, `description` যোগ)
-- [ ] `config.js`-এ `googleScriptUrl` বসানো
+- [x] `scripts/generate-config.js` + `js/config.defaults.js` — Cloudflare build-এ `config.js` অটো
+- [x] `wrangler.toml` → `babyorbitshops` + `npm run deploy`
+- [x] `DEPLOY.md` — Cloudflare Build/Deploy কমান্ড ও env vars
+- [ ] Cloudflare: Build `npm install && npm run build`, Deploy `npx wrangler deploy`, env `ADMIN_PASSWORD` (encrypt)
+- [ ] Custom domain `babyorbit.shop`
+- [ ] Google Apps Script **নতুন Deploy** (Code.gs আপডেট হয়েছে)
 - [ ] Script Properties: `ADMIN_PASSWORD`, `CALLMEBOT_KEY`, `WHATSAPP_PHONE`
 - [ ] Admin → Settings সেভ + ডিফল্ট ডেটা সিড (প্রথমবার)
 - [ ] `sitemap.xml` / `robots.txt`-এ আসল ডোমেইন
