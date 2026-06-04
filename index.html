@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+
+<html lang="bn">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <meta name="description" content="Baby Orbit থেকে বেবি গাড়ি, খেলনা ও বই ক্যাশ অন ডেলিভারিতে অর্ডার করুন। ঢাকায় ২৪-৪৮ ঘণ্টায় ডেলিভারি।">
+
+  <meta name="theme-color" content="#FF6B9D">
+
+
+
+  <title>Baby Orbit — সরাসরি অর্ডার করুন</title>
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+
+  <link rel="apple-touch-icon" href="/favicon.svg">
+
+
+
+  <meta property="og:type" content="website">
+
+  <meta property="og:locale" content="bn_BD">
+
+  <meta id="og-title" property="og:title" content="Baby Orbit — সরাসরি অর্ডার করুন">
+
+  <meta id="og-desc" property="og:description" content="Baby Orbit থেকে ক্যাশ অন ডেলিভারিতে বেবি পণ্য অর্ডার করুন">
+
+  <meta id="og-image" property="og:image" content="https://images.unsplash.com/photo-1515488042361-ee00e17a8abf?w=1200&h=630&fit=crop">
+
+  <meta id="og-url" property="og:url" content="">
+
+
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link rel="preconnect" href="https://script.google.com">
+
+  <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+
+  <link rel="dns-prefetch" href="https://script.google.com">
+
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+
+
+  <link rel="stylesheet" href="/css/tailwind.css">
+
+  <style>
+
+    html { scroll-behavior: smooth; }
+
+    body {
+
+      font-family: 'Noto Sans Bengali', sans-serif;
+
+      -webkit-tap-highlight-color: transparent;
+
+      padding-bottom: env(safe-area-inset-bottom, 0);
+
+    }
+
+    .site-container { width: 100%; max-width: 36rem; margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; }
+
+    @media (min-width: 768px) { .site-container { max-width: 48rem; padding-left: 1.5rem; padding-right: 1.5rem; } }
+
+    @media (min-width: 1024px) { .site-container { max-width: 64rem; } }
+
+    @media (min-width: 1280px) { .site-container { max-width: 72rem; } }
+
+
+
+    .category-btn:active { transform: scale(0.95); }
+
+    .order-btn { animation: pulse-glow 2s ease-in-out infinite; }
+
+    #success-modal.show { display: flex; }
+
+    @keyframes qv-enter { from { transform: translateY(28px) scale(0.98); opacity: 0; } to { transform: none; opacity: 1; } }
+
+    #quickview-modal:not(.hidden) #qv-card { animation: qv-enter 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+
+    .product-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+
+    .product-card:active { transform: scale(0.98); }
+
+    .hide-category-nav .category-nav { display: none; }
+
+    .hide-category-nav .hero-categories { display: none; }
+
+    .single-category-mode .category-section.hidden-cat { display: none; }
+
+    .products-grid { display: grid; gap: 1.25rem; grid-template-columns: 1fr; }
+
+    @media (min-width: 640px) { .products-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    @media (min-width: 1024px) { .products-grid { grid-template-columns: repeat(3, 1fr); } }
+
+
+
+    @media (min-width: 768px) {
+
+      .order-btn:hover { transform: scale(1.02); }
+
+      .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.12); }
+
+    }
+
+  </style>
+
+</head>
+
+<body class="bg-gradient-to-b from-pink-50 via-white to-blue-50 min-h-screen pb-28 md:pb-24 font-bengali text-gray-800">
+
+
+
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-pink-100">
+
+    <div class="site-container py-3 flex items-center justify-between gap-3">
+
+      <a href="/" class="flex items-center gap-2 min-w-0">
+
+        <div id="site-logo-fallback" class="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white text-xl md:text-2xl shadow-md">👶</div>
+
+        <img id="site-logo" alt="" class="hidden w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-full object-cover bg-white shadow-md">
+
+
+        <div class="min-w-0">
+
+          <h1 class="text-base md:text-lg font-bold text-gray-900 leading-tight truncate">Baby Orbit</h1>
+
+          <p class="text-xs text-pink-500 font-medium">ক্যাশ অন ডেলিভারি</p>
+
+        </div>
+
+      </a>
+
+      <div class="flex items-center gap-2 shrink-0">
+
+        <a id="facebook-btn" href="#" target="_blank" rel="noopener"
+
+          class="hidden bg-blue-600 text-white px-3 py-2 rounded-full text-xs md:text-sm font-bold shadow-md active:scale-95 transition-transform">
+
+          📘 FB
+
+        </a>
+
+        <a id="whatsapp-btn" href="#" target="_blank" rel="noopener"
+
+          class="hidden bg-[#25D366] text-white px-3 py-2 rounded-full text-xs md:text-sm font-bold shadow-md active:scale-95 transition-transform">
+
+          💬 WA
+
+        </a>
+
+        <a href="tel:8801812345678" data-hotline-link
+
+          class="bg-green-500 text-white px-3 py-2 md:px-4 rounded-full text-xs md:text-sm font-bold shadow-md active:scale-95 transition-transform">
+
+          📞 কল
+
+        </a>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+
+  <section class="hero-categories site-container pt-6 md:pt-10 pb-4 text-center">
+
+    <h2 class="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-1">
+
+      আপনার সন্তানের জন্য<br><span class="text-pink-500">সেরা পণ্য</span>
+
+    </h2>
+
+    <p class="text-gray-500 text-sm md:text-base mb-4 md:mb-5">ক্যাশ অন ডেলিভারি — পণ্য হাতে পেয়ে টাকা দিন</p>
+
+    <button type="button" id="hero-cta"
+
+      class="inline-flex items-center gap-2 mb-6 md:mb-8 px-7 py-3.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-base md:text-lg font-extrabold rounded-full shadow-lg active:scale-95 transition-transform animate-pulse-glow">
+
+      🛒 এখনই অর্ডার করুন
+
+    </button>
+
+    <nav id="category-nav" class="category-nav grid gap-3 md:gap-4 mb-2"></nav>
+
+  </section>
+
+
+
+  <!-- কীভাবে অর্ডার করবেন + ট্রাস্ট ব্যাজ -->
+
+  <section id="how-trust" class="site-container pb-2">
+
+    <div class="bg-white rounded-2xl shadow-sm border border-pink-100 p-4 md:p-5">
+
+      <div class="grid grid-cols-3 gap-2 md:gap-4 text-center">
+
+        <div class="flex flex-col items-center gap-1">
+
+          <span class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-pink-100 flex items-center justify-center text-lg md:text-xl">①</span>
+
+          <p class="text-[11px] md:text-sm font-bold text-gray-700 leading-tight">পণ্য পছন্দ<br>করুন</p>
+
+        </div>
+
+        <div class="flex flex-col items-center gap-1">
+
+          <span class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-pink-100 flex items-center justify-center text-lg md:text-xl">②</span>
+
+          <p class="text-[11px] md:text-sm font-bold text-gray-700 leading-tight">নাম-ঠিকানা<br>দিন</p>
+
+        </div>
+
+        <div class="flex flex-col items-center gap-1">
+
+          <span class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-pink-100 flex items-center justify-center text-lg md:text-xl">③</span>
+
+          <p class="text-[11px] md:text-sm font-bold text-gray-700 leading-tight">পণ্য পেয়ে<br>টাকা দিন</p>
+
+        </div>
+
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-4 pt-3 border-t border-gray-100 text-[11px] md:text-xs font-semibold text-gray-600">
+
+        <span>✅ ক্যাশ অন ডেলিভারি</span>
+
+        <span>🚚 ২৪–৪৮ ঘণ্টায় ডেলিভারি</span>
+
+        <span>🔄 সহজ রিটার্ন</span>
+
+        <span>📞 অর্ডারের আগে কল কনফার্ম</span>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- সার্চ + ক্যাটাগরি ফিল্টার (sticky) -->
+
+  <div id="search-filter-bar" class="sticky top-[60px] md:top-[68px] z-30 bg-white/95 backdrop-blur-md border-y border-pink-100">
+
+    <div class="site-container py-3 space-y-2">
+
+      <div class="relative">
+
+        <input id="product-search" type="search" autocomplete="off"
+
+          placeholder="পণ্য খুঁজুন... (যেমন: টেডি বিয়ার, গাড়ি)"
+
+          class="w-full pl-11 pr-4 py-3 text-base rounded-2xl border-2 border-gray-200 focus:border-pink-400 focus:ring-4 focus:ring-pink-100 outline-none">
+
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+
+      </div>
+
+      <div id="filter-chips" class="flex gap-2 overflow-x-auto pb-1"></div>
+
+    </div>
+
+  </div>
+
+
+
+  <div id="single-category-banner" class="hidden site-container pt-4">
+
+    <div class="bg-white rounded-2xl p-4 md:p-6 shadow-md border border-pink-100 text-center">
+
+      <span id="single-category-icon" class="text-4xl md:text-5xl"></span>
+
+      <h2 id="single-category-title" class="text-xl md:text-2xl font-extrabold mt-2"></h2>
+
+      <p class="text-gray-500 text-sm mt-1">নিচ থেকে পছন্দের পণ্যে অর্ডার করুন</p>
+
+      <a href="/" class="inline-block mt-3 text-pink-500 text-sm font-semibold underline">← সব ক্যাটাগরি দেখুন</a>
+
+    </div>
+
+  </div>
+
+
+
+  <main id="products-main" class="site-container space-y-10 md:space-y-14 py-6 md:py-10 transition-opacity duration-300">
+
+    <div id="category-sections" class="space-y-10 md:space-y-14"></div>
+
+    <div id="no-results" class="hidden text-center py-12">
+
+      <div class="text-5xl mb-3">🔍</div>
+
+      <p class="text-gray-500 font-semibold">কোনো পণ্য পাওয়া যায়নি</p>
+
+      <button type="button" id="clear-search" class="mt-3 text-pink-500 font-bold underline">সব পণ্য দেখুন</button>
+
+    </div>
+
+
+
+    <section id="order-form-section" class="scroll-mt-20 max-w-2xl mx-auto w-full">
+
+      <div class="bg-white rounded-3xl shadow-xl border-2 border-green-200 overflow-hidden">
+
+        <div class="bg-gradient-to-r from-green-500 to-emerald-600 px-5 py-4 md:py-5 text-white text-center">
+
+          <h2 class="text-xl md:text-2xl font-extrabold">📝 অর্ডার ফর্ম</h2>
+
+          <p class="text-green-100 text-sm mt-1">নিচের তথ্য দিন — বাকি কাজ আমরা করব</p>
+
+        </div>
+
+
+
+        <form id="order-form" class="p-5 md:p-8 space-y-5">
+
+          <div id="no-product-warning" class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 text-center">
+
+            <p class="text-amber-800 font-bold">⚠️ আগে উপর থেকে পণ্য সিলেক্ট করুন</p>
+
+            <p class="text-amber-600 text-sm mt-1">“সরাসরি অর্ডার করুন” বাটনে ক্লিক করুন</p>
+
+          </div>
+
+
+
+          <div id="selected-product-box" class="hidden bg-pink-50 border-2 border-pink-200 rounded-2xl p-4 md:p-5 text-center">
+
+            <p class="text-xs text-pink-500 font-semibold uppercase tracking-wide">আপনি অর্ডার করছেন</p>
+
+            <p id="selected-product-name" class="text-lg md:text-xl font-bold text-gray-900 mt-1"></p>
+
+            <p id="selected-product-price" class="text-red-500 font-extrabold text-xl md:text-2xl mt-1"></p>
+
+            <div class="flex items-center justify-center gap-3 mt-3">
+
+              <span class="text-sm font-bold text-gray-600">পরিমাণ</span>
+
+              <div class="inline-flex items-center bg-white border-2 border-pink-200 rounded-full overflow-hidden">
+
+                <button type="button" id="qty-minus" aria-label="কমান" class="w-10 h-10 text-2xl font-bold text-pink-500 active:bg-pink-100">−</button>
+
+                <input id="qty-input" type="text" inputmode="numeric" value="1" readonly
+
+                  class="w-12 text-center text-lg font-extrabold text-gray-900 outline-none bg-transparent">
+
+                <button type="button" id="qty-plus" aria-label="বাড়ান" class="w-10 h-10 text-2xl font-bold text-pink-500 active:bg-pink-100">+</button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+
+          <input type="hidden" id="product-name-input" name="product">
+
+          <input type="hidden" id="product-price-input" name="productPrice" value="0">
+
+
+
+          <div>
+
+            <label for="customer-name" class="block text-base font-bold text-gray-700 mb-2">👤 আপনার নাম</label>
+
+            <input type="text" id="customer-name" name="name" required autocomplete="name"
+
+              placeholder="যেমন: ফাতেমা আক্তার"
+
+              class="w-full px-5 py-4 text-base md:text-lg border-2 border-gray-200 rounded-2xl focus:border-green-500 focus:ring-4 focus:ring-green-100 outline-none">
+
+          </div>
+
+
+
+          <div>
+
+            <label for="customer-phone" class="block text-base font-bold text-gray-700 mb-2">📱 মোবাইল নাম্বার</label>
+
+            <input type="tel" id="customer-phone" name="phone" required autocomplete="tel"
+
+              placeholder="০১৭XXXXXXXX"
+
+              inputmode="numeric"
+
+              class="w-full px-5 py-4 text-base md:text-lg border-2 border-gray-200 rounded-2xl focus:border-green-500 focus:ring-4 focus:ring-green-100 outline-none">
+
+            <p id="phone-error" class="text-red-500 text-sm mt-1 hidden">সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (01XXXXXXXXX)</p>
+
+          </div>
+
+
+
+          <div>
+
+            <label for="customer-address" class="block text-base font-bold text-gray-700 mb-2">🏠 সম্পূর্ণ ঠিকানা</label>
+
+            <textarea id="customer-address" name="address" required rows="3" autocomplete="street-address"
+
+              placeholder="বাড়ি/রোড, এলাকা, থানা, জেলা — বিস্তারিত লিখুন"
+
+              class="w-full px-5 py-4 text-base md:text-lg border-2 border-gray-200 rounded-2xl focus:border-green-500 focus:ring-4 focus:ring-green-100 outline-none resize-none"></textarea>
+
+          </div>
+
+
+
+          <div>
+
+            <p class="text-base font-bold text-gray-700 mb-3">🚚 ডেলিভারি এরিয়া <span class="text-red-500">*</span></p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+              <div class="delivery-option">
+
+                <input type="radio" id="delivery-dhaka" name="delivery" value="dhaka" required class="sr-only peer">
+
+                <label for="delivery-dhaka"
+
+                  class="flex items-center gap-3 md:gap-4 w-full p-4 rounded-2xl border-2 border-gray-200 bg-white cursor-pointer peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:ring-4 peer-checked:ring-green-200 h-full">
+
+                  <span class="text-2xl md:text-3xl">🟢</span>
+
+                  <div>
+
+                    <p class="font-bold text-base md:text-lg text-gray-900">ঢাকার ভিতরে</p>
+
+                    <p class="text-green-600 font-semibold text-sm md:text-base" data-delivery-fee="dhaka">ডেলিভারি ৳৬০</p>
+
+                  </div>
+
+                </label>
+
+              </div>
+
+              <div class="delivery-option">
+
+                <input type="radio" id="delivery-outside" name="delivery" value="outside" class="sr-only peer">
+
+                <label for="delivery-outside"
+
+                  class="flex items-center gap-3 md:gap-4 w-full p-4 rounded-2xl border-2 border-gray-200 bg-white cursor-pointer peer-checked:border-red-400 peer-checked:bg-red-50 peer-checked:ring-4 peer-checked:ring-red-200 h-full">
+
+                  <span class="text-2xl md:text-3xl">🔴</span>
+
+                  <div>
+
+                    <p class="font-bold text-base md:text-lg text-gray-900">ঢাকার বাইরে</p>
+
+                    <p class="text-red-500 font-semibold text-sm md:text-base" data-delivery-fee="outside">ডেলিভারি ৳১২০</p>
+
+                  </div>
+
+                </label>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="bg-white border-2 border-dashed border-emerald-200 rounded-2xl p-4">
+
+            <div class="flex flex-col sm:flex-row gap-2">
+
+              <input id="coupon-code" type="text" placeholder="কুপন কোড থাকলে লিখুন"
+
+                class="flex-1 px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none uppercase">
+
+              <div class="flex gap-2">
+
+                <button type="button" id="coupon-apply" class="px-4 py-3 bg-emerald-500 text-white font-bold rounded-xl whitespace-nowrap">কুপন অ্যাপ্লাই</button>
+
+                <button type="button" id="coupon-clear" class="px-4 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl whitespace-nowrap">ক্লিয়ার</button>
+
+              </div>
+
+            </div>
+
+            <p id="coupon-message" class="hidden text-sm mt-2"></p>
+
+          </div>
+
+
+
+          <div id="order-total-box" class="hidden bg-green-50 border-2 border-green-300 rounded-2xl p-4 md:p-5">
+
+            <div class="flex justify-between text-sm md:text-base text-gray-600 mb-1">
+
+              <span>পণ্যের দাম</span><span id="total-product">৳০</span>
+
+            </div>
+
+            <div id="coupon-discount-row" class="hidden flex justify-between text-sm md:text-base text-emerald-700 mb-2">
+
+              <span>কুপন ছাড়</span><span id="total-discount">−৳০</span>
+
+            </div>
+
+            <div class="flex justify-between text-sm md:text-base text-gray-600 mb-2">
+
+              <span>ডেলিভারি চার্জ</span><span id="total-delivery">৳০</span>
+
+            </div>
+
+            <div class="flex justify-between text-xl md:text-2xl font-extrabold text-green-700 border-t border-green-200 pt-2">
+
+              <span>মোট পরিশোধ</span><span id="total-grand">৳০</span>
+
+            </div>
+
+          </div>
+
+
+
+          <button type="submit" id="submit-order-btn"
+
+            class="w-full py-4 md:py-5 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-lg md:text-xl font-extrabold rounded-2xl shadow-lg active:scale-[0.98] transition-transform disabled:cursor-not-allowed disabled:opacity-60">
+
+            ✅ অর্ডার নিশ্চিত করুন
+
+          </button>
+
+        </form>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+
+  <!-- Sticky order bar (মোবাইলে পণ্য সিলেক্ট করলে footer-এর উপরে দেখাবে) -->
+
+  <div id="sticky-order-bar" class="hidden fixed left-0 right-0 z-30 px-3" style="bottom: calc(58px + env(safe-area-inset-bottom, 0px));">
+
+    <div class="site-container px-0">
+
+      <div class="bg-white rounded-2xl shadow-2xl border-2 border-green-300 p-2.5 flex items-center gap-3">
+
+        <div class="flex-1 min-w-0">
+
+          <p id="sticky-name" class="font-bold text-sm text-gray-900 truncate"></p>
+
+          <p id="sticky-price" class="text-green-600 font-extrabold text-sm"></p>
+
+        </div>
+
+        <button type="button" id="sticky-order-btn" class="shrink-0 px-5 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-extrabold rounded-xl text-sm active:scale-95 transition-transform">
+
+          অর্ডার করুন →
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- Quick View — পণ্যের বিস্তারিত -->
+
+  <div id="quickview-modal" class="hidden fixed inset-0 z-50 items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm sm:p-4">
+
+    <div id="qv-card" class="bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl max-h-[94vh] sm:max-h-[88vh] overflow-hidden shadow-2xl flex flex-col sm:flex-row">
+
+      <!-- ছবি -->
+
+      <div class="relative sm:w-1/2 shrink-0 bg-gray-100">
+
+        <img id="qv-image" alt="" class="w-full h-60 sm:h-full sm:min-h-[360px] object-cover">
+
+        <div class="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent pointer-events-none"></div>
+
+        <span id="qv-discount" class="hidden absolute top-3 left-3 bg-red-500 text-white text-xs font-extrabold px-3 py-1.5 rounded-full shadow-lg"></span>
+
+        <button type="button" id="qv-close" aria-label="বন্ধ"
+
+          class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/95 text-gray-700 text-lg font-bold shadow-lg active:scale-90 transition-transform">✕</button>
+
+      </div>
+
+      <!-- বিবরণ -->
+
+      <div class="flex flex-col sm:w-1/2 min-h-0">
+
+        <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
+
+          <div>
+
+            <h3 id="qv-name" class="text-xl md:text-2xl font-extrabold text-gray-900 leading-snug"></h3>
+
+            <div class="flex items-center gap-2 mt-1.5">
+
+              <span id="qv-rating" class="text-yellow-500 text-sm"></span>
+
+              <span class="text-xs text-gray-400">যাচাইকৃত পণ্য</span>
+
+            </div>
+
+          </div>
+
+          <div class="bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-100 rounded-2xl p-4">
+
+            <div class="flex items-end gap-2.5 flex-wrap">
+
+              <span id="qv-price" class="text-3xl md:text-4xl font-extrabold text-red-500 leading-none"></span>
+
+              <span id="qv-original" class="text-gray-400 line-through text-base mb-0.5"></span>
+
+            </div>
+
+            <p id="qv-save" class="hidden mt-1.5 text-green-600 text-sm font-bold"></p>
+
+            <p id="qv-stock" class="hidden text-sm mt-2"></p>
+
+          </div>
+
+          <div id="qv-color-wrap" class="hidden">
+
+            <p class="text-sm font-bold text-gray-700 mb-2">🎨 কালার নির্বাচন করুন</p>
+
+            <div id="qv-colors" class="flex flex-wrap gap-2"></div>
+
+          </div>
+
+          <div id="qv-size-wrap" class="hidden">
+
+            <p class="text-sm font-bold text-gray-700 mb-2">📏 সাইজ নির্বাচন করুন</p>
+
+            <div id="qv-sizes" class="flex flex-wrap gap-2"></div>
+
+          </div>
+
+          <div id="qv-variant-wrap" class="hidden">
+
+            <p class="text-sm font-bold text-gray-700 mb-2">✅ অপশন নির্বাচন করুন</p>
+
+            <div id="qv-variants" class="flex flex-wrap gap-2"></div>
+
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 text-center">
+
+            <div class="bg-gray-50 rounded-xl py-2.5 px-1">
+
+              <div class="text-lg">💵</div>
+
+              <p class="text-[10px] md:text-xs font-bold text-gray-600 leading-tight mt-0.5">ক্যাশ অন<br>ডেলিভারি</p>
+
+            </div>
+
+            <div class="bg-gray-50 rounded-xl py-2.5 px-1">
+
+              <div class="text-lg">🚚</div>
+
+              <p class="text-[10px] md:text-xs font-bold text-gray-600 leading-tight mt-0.5">২৪–৪৮ ঘণ্টা<br>ডেলিভারি</p>
+
+            </div>
+
+            <div class="bg-gray-50 rounded-xl py-2.5 px-1">
+
+              <div class="text-lg">🔄</div>
+
+              <p class="text-[10px] md:text-xs font-bold text-gray-600 leading-tight mt-0.5">সহজ<br>রিটার্ন</p>
+
+            </div>
+
+          </div>
+
+          <div>
+
+            <p class="text-sm font-bold text-gray-700 mb-1.5">📋 পণ্যের বিবরণ</p>
+
+            <p id="qv-desc" class="text-gray-600 text-sm md:text-base leading-relaxed whitespace-pre-line"></p>
+
+          </div>
+
+        </div>
+
+        <div class="shrink-0 border-t border-gray-100 p-4 bg-white">
+
+          <button type="button" id="qv-order"
+
+            class="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-base md:text-lg font-extrabold rounded-2xl shadow-lg active:scale-[0.98] transition-transform">
+
+            🛒 এখনই অর্ডার করুন (COD)
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <footer class="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]" style="padding-bottom: env(safe-area-inset-bottom, 0);">
+
+    <div class="site-container py-2.5 md:py-3">
+
+      <div class="grid grid-cols-4 gap-1 text-center">
+
+        <div class="flex flex-col items-center px-1">
+
+          <span class="text-base md:text-lg">💵</span>
+
+          <span class="text-[9px] md:text-[10px] font-bold text-gray-700 leading-tight">পণ্য দেখে<br>টাকা দেবেন</span>
+
+        </div>
+
+        <div class="flex flex-col items-center px-1">
+
+          <span class="text-base md:text-lg">🚚</span>
+
+          <span class="text-[9px] md:text-[10px] font-bold text-gray-700 leading-tight">২৪-৪৮ ঘণ্টা<br>ডেলিভারি</span>
+
+        </div>
+
+        <a id="footer-whatsapp" href="#" target="_blank" rel="noopener"
+
+          class="hidden flex-col items-center active:scale-95 px-1">
+
+          <span class="text-base md:text-lg">💬</span>
+
+          <span class="text-[9px] md:text-[10px] font-bold text-[#25D366] leading-tight">WhatsApp<br>চ্যাট</span>
+
+        </a>
+
+        <a href="tel:8801812345678" data-hotline-link class="flex flex-col items-center active:scale-95 px-1">
+
+          <span class="text-base md:text-lg">📞</span>
+
+          <span class="text-[9px] md:text-[10px] font-bold text-green-600 leading-tight">হটলাইন<br><span data-hotline-text>০১৮১২৩৪৫৬৭৮</span></span>
+
+        </a>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+
+  <div id="success-modal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+
+    <div class="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full text-center shadow-2xl animate-bounce-soft mx-auto">
+
+      <div class="w-20 h-20 md:w-24 md:h-24 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-5">
+
+        <span class="text-4xl md:text-5xl">✅</span>
+
+      </div>
+
+      <h3 class="text-xl md:text-2xl font-extrabold text-gray-900 mb-3">ধন্যবাদ!</h3>
+
+      <p class="text-gray-600 text-sm md:text-base leading-relaxed mb-6">
+
+        আপনার অর্ডারটি সফলভাবে নেওয়া হয়েছে। আমাদের প্রতিনিধি কিছুক্ষণের মধ্যে কল করে অর্ডারটি কনফার্ম করবেন।
+
+      </p>
+
+      <div id="success-summary"></div>
+
+      <button type="button" id="memo-print-btn"
+
+        class="w-full py-3 mb-2 bg-pink-500 text-white text-base font-bold rounded-2xl active:scale-95 transition-transform">
+
+        🧾 মেমো প্রিন্ট / PDF
+
+      </button>
+
+      <button type="button" id="close-modal-btn"
+
+        class="w-full py-4 bg-green-500 text-white text-lg font-bold rounded-2xl active:scale-95 transition-transform">
+
+        ঠিক আছে
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+  <script src="/js/config.js"></script>
+
+  <script src="/js/products.js"></script>
+
+  <script src="/js/utils.js"></script>
+
+  <script src="/js/api.js"></script>
+
+  <script src="/js/memo.js"></script>
+
+  <script src="/js/app.js"></script>
+
+</body>
+
+</html>
+
+

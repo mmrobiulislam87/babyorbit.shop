@@ -1,0 +1,14 @@
+{
+  "name": "baby-shop",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Baby Orbit storefront + admin (Tailwind production build)",
+  "scripts": {
+    "build:css": "tailwindcss -i ./css/input.css -o ./css/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./css/input.css -o ./css/tailwind.css --watch",
+    "build": "npm run build:css"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

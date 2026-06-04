@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin — Baby Orbit</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    // Apply saved theme before paint to avoid flash
+    (function () {
+      try {
+        var t = localStorage.getItem('babyshop_admin_theme');
+        if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/tailwind.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body { font-family: 'Noto Sans Bengali', sans-serif; }
+    .admin-input { width: 100%; }
+    .nav-link.active { background: linear-gradient(135deg, #ec4899, #d946ef); color: #fff; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+    .dark ::-webkit-scrollbar-thumb { background: #475569; }
+  </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen transition-colors">
+
+  <!-- Login -->
+  <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 w-full max-w-sm border border-pink-100 dark:border-gray-700">
+      <div class="text-center mb-6">
+        <div class="text-5xl mb-2">🔐</div>
+        <h1 class="text-2xl font-extrabold">Admin Panel</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Baby Orbit</p>
+      </div>
+      <form id="login-form" class="space-y-4">
+        <input type="password" id="login-password" required placeholder="পাসওয়ার্ড"
+          class="w-full px-4 py-4 text-lg border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-2xl focus:border-pink-500 outline-none">
+        <button type="submit" class="w-full py-4 bg-pink-500 text-white font-bold rounded-2xl text-lg active:scale-95 transition-transform">
+          লগইন করুন
+        </button>
+      </form>
+      <p id="login-error" class="text-red-500 text-sm text-center mt-3 hidden"></p>
+      <a href="/" class="block text-center text-pink-500 text-sm mt-4 underline">← সাইটে ফিরে যান</a>
+    </div>
+  </div>
+
+  <!-- Admin App -->
+  <div id="admin-app" class="hidden">
+
+    <!-- Sidebar backdrop (mobile) -->
+    <div id="sidebar-backdrop" class="hidden fixed inset-0 bg-black/50 z-30 md:hidden"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+      class="fixed md:sticky top-0 z-40 md:z-0 h-screen w-64 shrink-0 -translate-x-full md:translate-x-0 transition-transform
+             bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col">
+      <div class="flex items-center gap-2 px-5 h-16 border-b border-gray-200 dark:border-gray-800">
+        <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-500 to-fuchsia-500 flex items-center justify-center text-white text-lg">🛠️</span>
+        <div class="min-w-0">
+          <p class="font-extrabold leading-tight truncate">Admin Panel</p>
+          <p id="backend-status" class="text-[11px] text-gray-400 truncate"></p>
+        </div>
+      </div>
+      <nav class="flex-1 overflow-y-auto p-3 space-y-1">
+        <button data-tab="dashboard" class="nav-link active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-left hover:bg-gray-100 dark:hover:bg-gray-800">
+          <span class="text-lg">📊</span> ড্যাশবোর্ড
+        </button>
+        <button data-tab="products" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-left hover:bg-gray-100 dark:hover:bg-gray-800">
+          <span class="text-lg">📦</span> পণ্য
+        </button>
+        <button data-tab="categories" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-left hover:bg-gray-100 dark:hover:bg-gray-800">
+          <span class="text-lg">🗂️</span> ক্যাটাগরি
+        </button>
+        <button data-tab="orders" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-left hover:bg-gray-100 dark:hover:bg-gray-800">
+          <span class="text-lg">🧾</span> অর্ডার
+        </button>
+        <button data-tab="settings" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-left hover:bg-gray-100 dark:hover:bg-gray-800">
+          <span class="text-lg">⚙️</span> সেটিংস
+        </button>
+      </nav>
+      <div class="p-3 border-t border-gray-200 dark:border-gray-800 space-y-1">
+        <a href="/" target="_blank" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-100 dark:hover:bg-gray-800">
+          <span>🌐</span> সাইট দেখুন
+        </a>
+        <button id="logout-btn" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10">
+          <span>🚪</span> লগআউট
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="flex-1 min-w-0 flex flex-col min-h-screen">
+      <!-- Topbar -->
+      <header class="sticky top-0 z-20 bg-white/90 dark:bg-gray-900/90 backdrop-blur border-b border-gray-200 dark:border-gray-800">
+        <div class="h-16 px-4 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <button id="menu-btn" class="md:hidden w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 text-xl">☰</button>
+            <h2 id="page-title" class="text-lg font-extrabold truncate">ড্যাশবোর্ড</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="refresh-btn" title="রিফ্রেশ" class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 text-lg active:scale-95">🔄</button>
+            <button id="theme-toggle" title="থিম" class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 text-lg active:scale-95">🌙</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="flex-1 p-4 md:p-6 space-y-6">
+
+        <!-- Dashboard -->
+        <section id="tab-dashboard" class="tab-panel space-y-6">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+            <div class="bg-white dark:bg-gray-900 rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+              <div class="flex items-center justify-between">
+                <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm">আজকের অর্ডার</p><span class="text-xl">🛍️</span>
+              </div>
+              <p id="stat-today-orders" class="text-2xl md:text-3xl font-extrabold text-pink-500 mt-1">0</p>
+            </div>
+            <div class="bg-white dark:bg-gray-900 rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+              <div class="flex items-center justify-between">
+                <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm">আজকের রেভিনিউ</p><span class="text-xl">💰</span>
+              </div>
+              <p id="stat-today-revenue" class="text-2xl md:text-3xl font-extrabold text-green-500 mt-1">৳0</p>
+            </div>
+            <div class="bg-white dark:bg-gray-900 rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+              <div class="flex items-center justify-between">
+                <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm">মোট পণ্য</p><span class="text-xl">📦</span>
+              </div>
+              <p id="stat-products" class="text-2xl md:text-3xl font-extrabold text-blue-500 mt-1">0</p>
+            </div>
+            <div class="bg-white dark:bg-gray-900 rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+              <div class="flex items-center justify-between">
+                <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm">ক্যাটাগরি</p><span class="text-xl">🗂️</span>
+              </div>
+              <p id="stat-categories" class="text-2xl md:text-3xl font-extrabold text-purple-500 mt-1">0</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+            <div class="bg-white dark:bg-gray-900 rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+              <div class="flex items-center justify-between">
+                <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm">এই মাসের রেভিনিউ</p><span class="text-xl">📅</span>
+              </div>
+              <p id="stat-month-revenue" class="text-xl md:text-3xl font-extrabold text-emerald-500 mt-1">৳0</p>
+            </div>
+            <div class="bg-white dark:bg-gray-900 rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+              <div class="flex items-center justify-between">
+                <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm">মোট অর্ডার</p><span class="text-xl">📚</span>
+              </div>
+              <p id="stat-total-orders" class="text-xl md:text-3xl font-extrabold text-indigo-500 mt-1">0</p>
+            </div>
+            <div class="bg-white dark:bg-gray-900 rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+              <div class="flex items-center justify-between">
+                <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm">পেন্ডিং অর্ডার</p><span class="text-xl">⏳</span>
+              </div>
+              <p id="stat-pending" class="text-xl md:text-3xl font-extrabold text-amber-500 mt-1">0</p>
+            </div>
+            <div class="bg-white dark:bg-gray-900 rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+              <div class="flex items-center justify-between">
+                <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm">এই মাসের রিফান্ড</p><span class="text-xl">↩️</span>
+              </div>
+              <p id="stat-month-refund" class="text-xl md:text-3xl font-extrabold text-orange-500 mt-1">৳0</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div class="lg:col-span-2 bg-white dark:bg-gray-900 rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+              <h3 class="font-bold mb-3">৭ দিনের রেভিনিউ</h3>
+              <div class="h-56"><canvas id="revenue-chart"></canvas></div>
+            </div>
+            <div class="bg-white dark:bg-gray-900 rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+              <h3 class="font-bold mb-3">অর্ডার স্ট্যাটাস</h3>
+              <div class="h-56"><canvas id="status-chart"></canvas></div>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-900 rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+            <h3 class="font-bold text-lg mb-3">🏆 টপ-সেলিং পণ্য</h3>
+            <div id="top-products" class="space-y-2 text-sm"></div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-900 rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 dark:border-gray-800">
+            <h3 class="font-bold text-lg mb-3">সাম্প্রতিক অর্ডার</h3>
+            <div id="recent-orders" class="space-y-2 text-sm"></div>
+          </div>
+
+          <button id="seed-btn" class="w-full py-3 bg-gray-100 dark:bg-gray-800 rounded-xl font-semibold text-gray-600 dark:text-gray-300">
+            🌱 ডিফল্ট ডেটা লোড করুন (প্রথমবার)
+          </button>
+        </section>
+
+        <!-- Products -->
+        <section id="tab-products" class="tab-panel hidden space-y-4">
+          <button id="add-product-btn" class="w-full py-4 bg-green-500 text-white font-bold rounded-2xl text-lg">
+            + নতুন পণ্য যোগ করুন
+          </button>
+          <input id="product-search" type="search" placeholder="🔍 পণ্য খুঁজুন"
+            class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl outline-none focus:border-pink-500 text-sm">
+          <div id="products-list" class="space-y-3"></div>
+        </section>
+
+        <!-- Categories -->
+        <section id="tab-categories" class="tab-panel hidden space-y-4">
+          <button id="add-category-btn" class="w-full py-4 bg-blue-500 text-white font-bold rounded-2xl text-lg">
+            + নতুন ক্যাটাগরি যোগ করুন
+          </button>
+          <div id="categories-list" class="space-y-3"></div>
+          <div class="bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/30 rounded-xl p-4 text-sm text-yellow-800 dark:text-yellow-300">
+            <strong>Facebook Shop Now লিংক:</strong> প্রতিটি ক্যাটাগরির slug ব্যবহার করুন<br>
+            উদাহরণ: <code class="bg-yellow-100 dark:bg-yellow-500/20 px-1 rounded">babyorbit.shop/baby-car</code>
+          </div>
+        </section>
+
+        <!-- Orders -->
+        <section id="tab-orders" class="tab-panel hidden space-y-3">
+          <div class="bg-white dark:bg-gray-900 rounded-2xl p-3 md:p-4 shadow-sm border border-gray-100 dark:border-gray-800 space-y-3">
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input id="order-search" type="search" placeholder="🔍 নাম / মোবাইল / পণ্য খুঁজুন"
+                class="flex-1 px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl outline-none focus:border-pink-500 text-sm">
+              <div class="flex gap-2">
+                <button id="print-today-btn" class="flex-1 sm:flex-none px-3 py-2.5 bg-gray-800 dark:bg-gray-700 text-white rounded-xl text-sm font-bold whitespace-nowrap">🖨️ আজকের প্যাকিং</button>
+                <button id="export-orders-btn" class="flex-1 sm:flex-none px-3 py-2.5 bg-green-600 text-white rounded-xl text-sm font-bold whitespace-nowrap">⬇️ CSV</button>
+              </div>
+            </div>
+            <div id="order-filter" class="flex flex-wrap gap-1.5"></div>
+          </div>
+          <div id="orders-list" class="space-y-3"></div>
+        </section>
+
+        <!-- Settings -->
+        <section id="tab-settings" class="tab-panel hidden space-y-4">
+          <form id="settings-form" class="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800 space-y-4 max-w-2xl">
+
+            <h2 class="font-bold text-lg border-b dark:border-gray-700 pb-2">🖼️ লোগো ও ব্র্যান্ডিং</h2>
+            <div class="flex items-center gap-4">
+              <div id="logo-preview-box" class="w-20 h-20 rounded-2xl bg-gray-100 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center overflow-hidden shrink-0">
+                <img id="logo-preview" class="w-full h-full object-cover hidden">
+                <span id="logo-placeholder" class="text-3xl">👶</span>
+              </div>
+              <div class="flex-1 space-y-2">
+                <div class="flex gap-2">
+                  <label class="px-4 py-2.5 bg-pink-100 dark:bg-pink-500/20 text-pink-600 dark:text-pink-300 rounded-xl font-bold cursor-pointer whitespace-nowrap">
+                    📷 লোগো আপলোড
+                    <input type="file" id="logo-file" accept="image/*" class="hidden">
+                  </label>
+                  <button type="button" id="logo-remove" class="px-4 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-xl font-bold text-gray-600 dark:text-gray-300">মুছুন</button>
+                </div>
+                <input type="hidden" name="logo" id="logo-url">
+                <p class="text-xs text-gray-400">সাইটের Header ও Facebook শেয়ার (og:image)-এ সরাসরি দেখাবে। বর্গাকার (512×512) ছবি ভালো।</p>
+              </div>
+            </div>
+
+            <h2 class="font-bold text-lg border-b dark:border-gray-700 pb-2 pt-2">🏪 দোকানের তথ্য</h2>
+            <div>
+              <label class="block text-sm font-bold mb-1">দোকানের নাম</label>
+              <input name="shopName" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl outline-none focus:border-pink-500">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm font-bold mb-1">হটলাইন</label>
+                <input name="hotline" placeholder="01812345678" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl outline-none focus:border-pink-500">
+              </div>
+              <div>
+                <label class="block text-sm font-bold mb-1">tel: (880 সহ)</label>
+                <input name="hotlineTel" placeholder="8801812345678" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl outline-none focus:border-pink-500">
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm font-bold mb-1">ঢাকার ভিতরে (৳)</label>
+                <input name="deliveryDhaka" type="number" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl outline-none focus:border-pink-500">
+              </div>
+              <div>
+                <label class="block text-sm font-bold mb-1">ঢাকার বাইরে (৳)</label>
+                <input name="deliveryOutside" type="number" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl outline-none focus:border-pink-500">
+              </div>
+            </div>
+
+            <h2 class="font-bold text-lg border-b dark:border-gray-700 pb-2 pt-2">📘 Facebook</h2>
+            <div>
+              <label class="block text-sm font-bold mb-1">Facebook Page ID</label>
+              <input name="facebookPageId" placeholder="123456789012345" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl outline-none focus:border-pink-500">
+              <p class="text-xs text-gray-400 mt-1">Page Settings → About → Page ID</p>
+            </div>
+            <div>
+              <label class="block text-sm font-bold mb-1">Facebook Pixel ID</label>
+              <input name="facebookPixelId" placeholder="123456789012345" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl outline-none focus:border-pink-500">
+            </div>
+            <div>
+              <label class="block text-sm font-bold mb-1">Facebook Share ছবি URL (og:image)</label>
+              <input name="ogImage" placeholder="https://... (খালি রাখলে লোগো ব্যবহার হবে)" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl outline-none focus:border-pink-500">
+              <p class="text-xs text-gray-400 mt-1">খালি রাখলে লোগো অটো og:image হবে (1200×630 ভালো)</p>
+            </div>
+
+            <h2 class="font-bold text-lg border-b dark:border-gray-700 pb-2 pt-2">💬 WhatsApp</h2>
+            <div>
+              <label class="block text-sm font-bold mb-1">WhatsApp Business নম্বর (880 সহ)</label>
+              <input name="whatsappBusiness" placeholder="8801812345678" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl outline-none focus:border-pink-500">
+              <p class="text-xs text-gray-400 mt-1">সাইটে কাস্টমার Chat বাটন — wa.me লিংক</p>
+            </div>
+            <div>
+              <label class="block text-sm font-bold mb-1">অর্ডার নোটিফিকেশন WhatsApp (880 সহ)</label>
+              <input name="whatsappNotify" placeholder="8801812345678" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl outline-none focus:border-pink-500">
+            </div>
+            <div>
+              <label class="block text-sm font-bold mb-1">CallMeBot API Key</label>
+              <input name="callmebotKey" type="password" placeholder="API key (WhatsApp-এ allow message)" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl outline-none focus:border-pink-500">
+              <p class="text-xs text-gray-400 mt-1">+34 644 44 71 67-এ "I allow callmebot to send me messages" পাঠান</p>
+            </div>
+
+            <button type="submit" class="w-full py-4 bg-pink-500 text-white font-bold rounded-2xl text-lg">
+              💾 সেটিংস সেভ করুন
+            </button>
+          </form>
+
+          <div class="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800 max-w-2xl space-y-4">
+            <h2 class="font-bold text-lg border-b dark:border-gray-700 pb-2">🏷️ কুপন ম্যানেজার</h2>
+            <form id="coupon-form" class="space-y-3">
+              <input type="hidden" name="id">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-sm font-bold mb-1">কোড</label>
+                  <input name="code" required placeholder="SAVE100" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl outline-none focus:border-pink-500 uppercase">
+                </div>
+                <div>
+                  <label class="block text-sm font-bold mb-1">টাইপ</label>
+                  <select name="type" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl">
+                    <option value="fixed">ফিক্সড ৳</option>
+                    <option value="percent">শতকরা %</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-sm font-bold mb-1">মান</label>
+                  <input name="value" type="number" required placeholder="100" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl outline-none focus:border-pink-500">
+                </div>
+                <div>
+                  <label class="block text-sm font-bold mb-1">নোট</label>
+                  <input name="note" placeholder="নতুন কাস্টমার অফার" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 rounded-xl outline-none focus:border-pink-500">
+                </div>
+              </div>
+              <label class="inline-flex items-center gap-2 text-sm font-semibold">
+                <input name="active" type="checkbox" checked class="w-4 h-4 rounded">
+                <span>কুপন সক্রিয়</span>
+              </label>
+              <div class="flex gap-3">
+                <button type="submit" class="flex-1 py-3 bg-emerald-500 text-white font-bold rounded-xl">কুপন সেভ</button>
+                <button type="button" id="coupon-reset" class="px-5 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl font-bold">রিসেট</button>
+              </div>
+            </form>
+            <div id="coupons-list" class="space-y-2"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Product Modal -->
+  <div id="product-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+      <h2 id="product-modal-title" class="text-xl font-extrabold mb-4">পণ্য যোগ/এডিট</h2>
+      <form id="product-form" class="space-y-4">
+        <input type="hidden" name="id">
+        <div>
+          <label class="block text-sm font-bold mb-1">ক্যাটাগরি</label>
+          <select name="categoryId" required class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl"></select>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1">পণ্যের নাম</label>
+          <input name="name" required class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl">
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1">বিস্তারিত বর্ণনা / ফিচার</label>
+          <textarea name="description" rows="3" placeholder="যেমন: রিচার্জেবল ব্যাটারি, রিমোট কন্ট্রোল, ৩+ বছর..." class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl resize-none"></textarea>
+          <p class="text-xs text-gray-400 mt-1">কাস্টমার সাইটে "বিস্তারিত" পপআপে দেখাবে</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-bold mb-1">আসল দাম (৳)</label>
+            <input name="originalPrice" type="number" required class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl">
+          </div>
+          <div>
+            <label class="block text-sm font-bold mb-1">অফার দাম (৳)</label>
+            <input name="offerPrice" type="number" required class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1">স্টক সংখ্যা <span class="text-gray-400 font-normal">(খালি = আনলিমিটেড)</span></label>
+          <input name="stock" type="number" min="0" placeholder="যেমন: 12" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl">
+        </div>
+        <div class="bg-gray-50 dark:bg-gray-800/60 rounded-xl p-3 border border-gray-200 dark:border-gray-700">
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-sm font-bold">🎨 কালার / সাইজ ভ্যারিয়েন্ট <span class="text-gray-400 font-normal">(ঐচ্ছিক)</span></label>
+            <button type="button" id="add-variant-btn" class="text-xs px-3 py-1.5 bg-pink-100 dark:bg-pink-500/20 text-pink-600 dark:text-pink-300 rounded-lg font-bold">+ যোগ</button>
+          </div>
+          <p class="text-xs text-gray-400 mb-2">প্রতিটি কালার/সাইজের আলাদা দাম দিন। খালি রাখলে শুধু উপরের অফার দাম ব্যবহার হবে।</p>
+          <div id="variants-list" class="space-y-2"></div>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1">ছবি</label>
+          <div class="flex gap-2">
+            <input name="image" id="product-image-url" placeholder="ছবির URL" class="admin-input flex-1 px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl">
+            <label class="px-4 py-3 bg-pink-100 dark:bg-pink-500/20 text-pink-600 dark:text-pink-300 rounded-xl font-bold cursor-pointer whitespace-nowrap">
+              📷 আপলোড
+              <input type="file" id="product-image-file" accept="image/*" class="hidden">
+            </label>
+          </div>
+          <img id="product-image-preview" class="mt-2 w-full h-40 object-cover rounded-xl hidden">
+        </div>
+        <div class="flex gap-3">
+          <button type="submit" class="flex-1 py-3 bg-green-500 text-white font-bold rounded-xl">সেভ</button>
+          <button type="button" id="close-product-modal" class="px-6 py-3 bg-gray-100 dark:bg-gray-700 rounded-xl font-bold">বাতিল</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Category Modal -->
+  <div id="category-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg p-6">
+      <h2 class="text-xl font-extrabold mb-4">ক্যাটাগরি যোগ/এডিট</h2>
+      <form id="category-form" class="space-y-4">
+        <input type="hidden" name="id">
+        <div>
+          <label class="block text-sm font-bold mb-1">নাম (বাংলা)</label>
+          <input name="title" required placeholder="বেবি গাড়ি" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl">
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1">Slug (URL — ইংরেজি)</label>
+          <input name="slug" required placeholder="baby-car" pattern="[a-z0-9-]+" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl">
+          <p class="text-xs text-gray-400 mt-1">Facebook লিংক: babyorbit.shop/<strong>baby-car</strong></p>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-bold mb-1">আইকন (emoji)</label>
+            <input name="icon" placeholder="🏎️" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl">
+          </div>
+          <div>
+            <label class="block text-sm font-bold mb-1">ক্রম</label>
+            <input name="sortOrder" type="number" value="1" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1">রঙ (Tailwind gradient)</label>
+          <select name="gradient" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl">
+            <option value="from-red-400 to-orange-500">🔴 লাল-কমলা</option>
+            <option value="from-yellow-400 to-amber-500">🟡 হলুদ</option>
+            <option value="from-blue-400 to-indigo-500">🔵 নীল</option>
+            <option value="from-pink-400 to-rose-500">🩷 গোলাপি</option>
+            <option value="from-green-400 to-teal-500">🟢 সবুজ</option>
+            <option value="from-purple-400 to-violet-500">🟣 বেগুনি</option>
+          </select>
+        </div>
+        <div class="flex gap-3">
+          <button type="submit" class="flex-1 py-3 bg-blue-500 text-white font-bold rounded-xl">সেভ</button>
+          <button type="button" id="close-category-modal" class="px-6 py-3 bg-gray-100 dark:bg-gray-700 rounded-xl font-bold">বাতিল</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-700 text-white px-6 py-3 rounded-full text-sm font-semibold z-[70] shadow-lg"></div>
+
+  <!-- Refund Modal -->
+  <div id="refund-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg p-6 space-y-4">
+      <h2 class="text-xl font-extrabold">↩️ রিফান্ড / ফেরত তথ্য</h2>
+      <form id="refund-form" class="space-y-4">
+        <input type="hidden" name="rowIndex">
+        <div>
+          <label class="block text-sm font-bold mb-1">কারণ</label>
+          <textarea name="refundReason" rows="3" placeholder="যেমন: সাইজ মেলেনি / কাস্টমার রিটার্ন / ড্যামেজ" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1">রিফান্ড পরিমাণ (৳)</label>
+          <input name="refundAmount" type="number" min="0" placeholder="পুরো টাকা হলে মোট amount লিখুন" class="admin-input px-4 py-3 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl">
+        </div>
+        <div class="flex gap-3">
+          <button type="submit" class="flex-1 py-3 bg-orange-500 text-white font-bold rounded-xl">ফেরত সেভ</button>
+          <button type="button" id="close-refund-modal" class="px-6 py-3 bg-gray-100 dark:bg-gray-700 rounded-xl font-bold">বাতিল</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/products.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/memo.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

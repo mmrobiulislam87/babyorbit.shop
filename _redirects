@@ -1,0 +1,11 @@
+# Cloudflare Pages redirects
+# Static files (/js/, /favicon.svg, etc.) are served BEFORE these rules.
+
+# Admin panel
+/admin        /admin/index.html   200
+/admin/       /admin/index.html   200
+
+# Catch-all: every other path (incl. any category slug like /baby-car,
+# and ad deep-links) serves the storefront. app.js detects the slug from
+# the URL — so new categories work automatically, no edits needed here.
+/*            /index.html         200
