@@ -6,6 +6,7 @@
  *   ADMIN_PASSWORD  = your-secret-password
  *   WHATSAPP_PHONE  = 8801812345678
  *   CALLMEBOT_KEY   = callmebot-api-key
+ *   IMGBB_API_KEY   = (ঐচ্ছিক, সুপারিশ) imgbb.com ফ্রি API — ছবি সহজে আপলোড
  *
  * Run once: linkSpreadsheetFromActive() অথবা setupAllSheets()
  * Deploy: Web app → Anyone
@@ -22,7 +23,7 @@ var IMAGE_FOLDER_NAME = 'BabyShopImages';
  * Google Sheet ID — URL-এ /d/ এর পর যে কোড (শুধু Script Properties না থাকলে এটা ব্যবহার হয়)
  * উদাহরণ: https://docs.google.com/spreadsheets/d/1abc...xyz/edit → ID = 1abc...xyz
  */
-var CONFIG_SPREADSHEET_ID = '';
+var CONFIG_SPREADSHEET_ID = '1sjh9CgRQsPNQFr_5VY4_F0bqfeVySojhw-Lyr-84HGk';
 
 var GRADIENTS = [
   'from-red-400 to-orange-500',
@@ -493,24 +494,54 @@ function handleDeleteCoupon(data) {
 function handleUploadImage(data) {
   if (!data.base64 || !data.filename) throw new Error('Image data missing');
 
+  var b64 = String(data.base64).replace(/\s/g, '');
+  if (b64.length > 9000000) throw new Error('ছবি অনেক বড় — ২MB-এর ছোট ছবি দিন');
+
+  // ImgBB (সুপারিশ): Script Properties → IMGBB_API_KEY
+  var imgbbUrl = tryUploadImgBB(b64, data.filename);
+  if (imgbbUrl) return jsonResponse({ success: true, url: imgbbUrl, host: 'imgbb' });
+
   try {
     var folder = getOrCreateImageFolder();
     var mime = data.mimeType || 'image/jpeg';
-    var blob = Utilities.newBlob(Utilities.base64Decode(data.base64), mime, data.filename);
+    var blob = Utilities.newBlob(Utilities.base64Decode(b64), mime, data.filename);
     var file = folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
     var id = file.getId();
-    // thumbnail/lh3 work in <img> on external sites; uc?export=view often breaks
-    var url = 'https://drive.google.com/thumbnail?id=' + id + '&sz=w1200';
-    return jsonResponse({ success: true, url: url, fileId: id });
+    var url = 'https://lh3.googleusercontent.com/d/' + id;
+    return jsonResponse({ success: true, url: url, fileId: id, host: 'drive' });
   } catch (e) {
     var msg = String(e.message || e);
     if (msg.indexOf('authorization') !== -1 || msg.indexOf('Authorization') !== -1) {
-      throw new Error('Google Drive অনুমতি দরকার — Apps Script-এ authorizeDriveForUploads() একবার Run করুন');
+      throw new Error('Drive অনুমতি নেই — authorizeDriveForUploads() Run করুন, অথবা IMGBB_API_KEY সেট করুন (imgbb.com)');
     }
     throw e;
   }
+}
+
+/** imgbb.com → API key (ফ্রি) → Script Properties: IMGBB_API_KEY */
+function tryUploadImgBB(base64, filename) {
+  var key = PropertiesService.getScriptProperties().getProperty('IMGBB_API_KEY');
+  if (!key) return null;
+
+  var resp = UrlFetchApp.fetch('https://api.imgbb.com/1/upload', {
+    method: 'post',
+    muteHttpExceptions: true,
+    payload: { key: key, image: base64, name: filename || 'babyorbit' }
+  });
+  var json = JSON.parse(resp.getContentText());
+  if (!json.success) {
+    throw new Error((json.error && json.error.message) || 'ImgBB upload failed');
+  }
+  return (json.data && (json.data.url || json.data.display_url)) || null;
+}
+
+/** Editor → Run → log এ URL দেখবেন (ছবি টেস্ট) */
+function testImageUpload() {
+  var tiny = Utilities.base64Encode(Utilities.newBlob([0xFF, 0xD8, 0xFF, 0xD9], 'image/jpeg', 't.jpg').getBytes());
+  var r = handleUploadImage({ base64: tiny, filename: 'test.jpg', mimeType: 'image/jpeg', token: makeToken(getAdminPassword()) });
+  Logger.log(r.getContent());
 }
 
 /** Apps Script Editor → Run once → Allow Drive access (image upload) */
@@ -529,9 +560,10 @@ function getOrCreateImageFolder() {
 function normalizeDriveImageUrl(url) {
   if (!url) return '';
   var s = String(url);
+  if (s.indexOf('ibb.co') !== -1 || s.indexOf('imgbb') !== -1) return s;
   var m = s.match(/(?:[?&]id=|\/d\/)([a-zA-Z0-9_-]+)/);
-  if (!m || s.indexOf('drive.google') === -1 && s.indexOf('googleusercontent') === -1) return s;
-  return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1200';
+  if (!m || (s.indexOf('drive.google') === -1 && s.indexOf('googleusercontent') === -1)) return s;
+  return 'https://lh3.googleusercontent.com/d/' + m[1];
 }
 
 // ─── Orders ──────────────────────────────────────────────────

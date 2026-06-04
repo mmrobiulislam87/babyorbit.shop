@@ -796,6 +796,14 @@ function bindEvents() {
   document.getElementById('product-image-file').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    if (!hasBackend()) {
+      alert('googleScriptUrl সেট নেই — js/config.js বা Cloudflare GOOGLE_SCRIPT_URL চেক করুন');
+      return;
+    }
+    if (!getAdminToken()) {
+      alert('আগে Admin লগইন করুন (পাসওয়ার্ড বদলালে আবার লগইন)');
+      return;
+    }
     if (file.size > 5 * 1024 * 1024) { alert('ছবি ৫MB-এর কম হতে হবে'); return; }
     showToast('ছবি আপলোড হচ্ছে...');
     try {
@@ -806,7 +814,9 @@ function bindEvents() {
       preview.classList.remove('hidden');
       showToast('ছবি আপলোড হয়েছে — এখন **সেভ** চাপুন ✅');
     } catch (err) {
-      alert('ছবি আপলোড ব্যর্থ: ' + err.message);
+      const msg = err.message || String(err);
+      if (/unauthorized|লগইন/i.test(msg)) clearAdminToken();
+      alert('ছবি আপলোড ব্যর্থ: ' + msg);
     }
   });
 
@@ -814,6 +824,10 @@ function bindEvents() {
   document.getElementById('logo-file').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    if (!hasBackend() || !getAdminToken()) {
+      alert('লগইন করুন এবং API URL সেট আছে কিনা দেখুন');
+      return;
+    }
     if (file.size > 5 * 1024 * 1024) { alert('লোগো ৫MB-এর কম হতে হবে'); return; }
     showToast('লোগো আপলোড হচ্ছে...');
     try {

@@ -536,7 +536,7 @@ async function adminDeleteCoupon(id) {
 
 async function compressImageForUpload(file, maxDim = 1200, quality = 0.82) {
 
-  if (!file.type || !file.type.startsWith('image/') || file.size <= 400000) return file;
+  if (!file.type || !file.type.startsWith('image/') || file.size <= 250000) return file;
 
   const bmp = await createImageBitmap(file);
 
