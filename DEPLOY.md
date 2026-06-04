@@ -1,6 +1,6 @@
 # Baby Orbit — Cloudflare Deploy
 
-Cloudflare প্রজেক্ট: **`babyorbitshop`** (Worker + static assets)
+Cloudflare প্রজেক্ট: **`babyorbitshopb`** (Worker + static assets in `dist/`)
 
 ## Build settings (Git)
 
@@ -18,12 +18,12 @@ Cloudflare প্রজেক্ট: **`babyorbitshop`** (Worker + static assets
 2. **Settings → Build → API token** → **+ Create new token** (অটো) — `zeniusanalyzerpro` বা অন্য প্রজেক্টের token **নয়**
 3. নতুন token-এ অন্তত: **Workers Scripts — Edit**, **Account — Read**
 
-`wrangler pages deploy` **ব্যবহার করবেন না** — আপনার প্রজেক্ট Worker; deploy = `wrangler deploy`।
+`wrangler pages deploy` **ব্যবহার করবেন না** — deploy = `wrangler deploy` (শুধু `dist/` যায়, `node_modules` নয়)।
 
 ## সাইট URL চালু করুন
 
 1. **Domains** ট্যাব → **workers.dev** → **Enable**
-2. URL: `https://babyorbitshop.<subdomain>.workers.dev`
+2. URL: `https://babyorbitshopb.<subdomain>.workers.dev`
 3. **Custom domain:** `babyorbit.shop` যোগ করুন
 
 ## Environment variables
@@ -40,3 +40,5 @@ Cloudflare প্রজেক্ট: **`babyorbitshop`** (Worker + static assets
 | Authentication error 10000 | Variables থেকে `CLOUDFLARE_API_TOKEN` মুছুন; Build-এ নতুন auto token |
 | Pages project failed | Deploy command `npx wrangler deploy` (pages deploy নয়) |
 | No URLs enabled | Domains → workers.dev Enable |
+| Asset too large (workerd 111 MiB) | `dist/` শুধু সাইট ফাইল — `node_modules` deploy হয় না |
+| Worker name mismatch | `wrangler.toml` → `babyorbitshopb` (CI নামের সাথে মিল) |

@@ -7,7 +7,8 @@
     "generate-config": "node scripts/generate-config.js",
     "build:css": "tailwindcss -i ./css/input.css -o ./css/tailwind.css --minify",
     "watch:css": "tailwindcss -i ./css/input.css -o ./css/tailwind.css --watch",
-    "build": "npm run generate-config && npm run build:css",
+    "copy-dist": "node scripts/copy-dist.js",
+    "build": "npm run generate-config && npm run build:css && npm run copy-dist",
     "deploy": "wrangler deploy"
   },
   "engines": {
