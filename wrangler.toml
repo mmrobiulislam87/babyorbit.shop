@@ -11,4 +11,4 @@ directory = "dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "babyorbit-db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "792d43b6-b1d5-47af-86ea-d2e2f07e1645"
