@@ -1,12 +1,17 @@
 /**
- * Static assets + SPA routing (replaces Pages _redirects on Workers).
+ * Baby Orbit Worker — static site + D1 API at /api
  */
+import { handleApi } from './worker-api.js';
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    const path = url.pathname;
 
-    if (path === '/admin' || path.startsWith('/admin/')) {
+    if (url.pathname === '/api' || url.pathname === '/api/') {
+      return handleApi(request, env);
+    }
+
+    if (url.pathname === '/admin' || url.pathname.startsWith('/admin/')) {
       return env.ASSETS.fetch(new Request(new URL('/admin/index.html', url), request));
     }
 
@@ -15,8 +20,7 @@ export default {
       return assetResponse;
     }
 
-    // Category slugs, ?product= deep links, etc. → storefront
-    if (!looksLikeStaticFile(path)) {
+    if (!looksLikeStaticFile(url.pathname)) {
       return env.ASSETS.fetch(new Request(new URL('/index.html', url), request));
     }
 

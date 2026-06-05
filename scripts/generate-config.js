@@ -1,6 +1,5 @@
 /**
- * Build-time config for Cloudflare (config.js is gitignored locally).
- * Cloudflare: Settings → Variables → GOOGLE_SCRIPT_URL, ADMIN_PASSWORD (encrypted)
+ * Build-time config for Cloudflare deploy.
  */
 const fs = require('fs');
 const path = require('path');
@@ -21,25 +20,30 @@ if (fs.existsSync(defaultsFile)) {
   defaults = require(defaultsFile);
 }
 
+const apiUrl = (process.env.API_URL || defaults.apiUrl || '').trim();
+const googleScriptUrl = (process.env.GOOGLE_SCRIPT_URL || defaults.googleScriptUrl || '').trim();
+
 const cfg = {
   shopName: process.env.SHOP_NAME || defaults.shopName || 'Baby Orbit',
   hotline: process.env.HOTLINE || defaults.hotline || '01812345678',
   hotlineTel: process.env.HOTLINE_TEL || defaults.hotlineTel || '8801812345678',
-  googleScriptUrl: process.env.GOOGLE_SCRIPT_URL || defaults.googleScriptUrl || '',
+  apiUrl: apiUrl || (googleScriptUrl ? '' : '/api'),
+  googleScriptUrl,
+  backend: apiUrl ? 'd1' : (googleScriptUrl ? 'gas' : 'd1'),
   deliveryFees: defaults.deliveryFees || { dhaka: 60, outside: 120 },
   adminPassword: process.env.ADMIN_PASSWORD || defaults.adminPassword || ''
 };
 
-if (!cfg.googleScriptUrl) {
-  console.error('ERROR: GOOGLE_SCRIPT_URL missing. Set Cloudflare env var or js/config.defaults.js');
+if (!cfg.apiUrl && !cfg.googleScriptUrl) {
+  console.error('ERROR: apiUrl বা GOOGLE_SCRIPT_URL দরকার');
   process.exit(1);
 }
 
 if (!cfg.adminPassword) {
-  console.warn('WARN: ADMIN_PASSWORD not set — admin login may fail until you set it in Cloudflare.');
+  console.warn('WARN: ADMIN_PASSWORD not set — set Cloudflare Worker secret ADMIN_PASSWORD');
 }
 
-const body = `/** Auto-generated at build — edit js/config.defaults.js or Cloudflare env vars */\nconst SHOP_CONFIG = ${JSON.stringify(cfg, null, 2)};\n`;
+const body = `/** Auto-generated at build */\nconst SHOP_CONFIG = ${JSON.stringify(cfg, null, 2)};\n`;
 
 fs.writeFileSync(outFile, body, 'utf8');
-console.log('generate-config: wrote js/config.js');
+console.log('generate-config: wrote js/config.js (backend: ' + cfg.backend + ')');

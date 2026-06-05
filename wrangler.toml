@@ -5,3 +5,10 @@ main = "workers-site.js"
 [assets]
 binding = "ASSETS"
 directory = "dist"
+
+# D1 — প্রথমে: npx wrangler d1 create babyorbit-db
+# তারপর database_id এখানে বসান (D1-DEPLOY.md দেখুন)
+[[d1_databases]]
+binding = "DB"
+database_name = "babyorbit-db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"

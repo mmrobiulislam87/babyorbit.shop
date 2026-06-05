@@ -14,7 +14,7 @@ const CACHE_TTL_MS = 3 * 60 * 1000;
 
 function getApiUrl() {
 
-  return (SHOP_CONFIG.googleScriptUrl || '').trim();
+  return (SHOP_CONFIG.apiUrl || SHOP_CONFIG.googleScriptUrl || '').trim();
 
 }
 
@@ -28,17 +28,15 @@ function hasBackend() {
 
 
 
-async function apiGet(params) {
+function buildApiUrl(params) {
 
-  const url = new URL(getApiUrl());
+  const base = getApiUrl();
 
-  Object.keys(params).forEach((k) => url.searchParams.set(k, params[k]));
+  const url = base.startsWith('http') ? new URL(base) : new URL(base, window.location.origin);
 
-  const res = await fetch(url.toString());
+  if (params) Object.keys(params).forEach((k) => url.searchParams.set(k, params[k]));
 
-  if (!res.ok) throw new Error('API error ' + res.status);
-
-  return res.json();
+  return url.toString();
 
 }
 
@@ -46,11 +44,15 @@ async function apiGet(params) {
 
 async function apiPost(payload) {
 
-  const res = await fetch(getApiUrl(), {
+  const base = getApiUrl();
+
+  const url = base.startsWith('http') ? base : new URL(base, window.location.origin).toString();
+
+  const res = await fetch(url, {
 
     method: 'POST',
 
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    headers: { 'Content-Type': 'application/json' },
 
     body: JSON.stringify(payload)
 
@@ -75,6 +77,18 @@ async function apiPost(payload) {
   if (data && data.success === false) throw new Error(data.error || 'API failed');
 
   return data;
+
+}
+
+
+
+async function apiGet(params) {
+
+  const res = await fetch(buildApiUrl(params));
+
+  if (!res.ok) throw new Error('API error ' + res.status);
+
+  return res.json();
 
 }
 

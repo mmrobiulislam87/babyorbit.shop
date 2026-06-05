@@ -797,7 +797,7 @@ function bindEvents() {
     const file = e.target.files[0];
     if (!file) return;
     if (!hasBackend()) {
-      alert('googleScriptUrl সেট নেই — js/config.js বা Cloudflare GOOGLE_SCRIPT_URL চেক করুন');
+      alert('API সেট নেই — config.js-এ apiUrl: "/api" বা googleScriptUrl চেক করুন');
       return;
     }
     if (!getAdminToken()) {

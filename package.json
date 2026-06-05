@@ -9,7 +9,10 @@
     "watch:css": "tailwindcss -i ./css/input.css -o ./css/tailwind.css --watch",
     "copy-dist": "node scripts/copy-dist.js",
     "build": "npm run generate-config && npm run build:css && npm run copy-dist",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create babyorbit-db",
+    "db:migrate": "wrangler d1 execute babyorbit-db --remote --file=schema.sql",
+    "db:migrate:local": "wrangler d1 execute babyorbit-db --local --file=schema.sql"
   },
   "engines": {
     "node": ">=18 <=22"

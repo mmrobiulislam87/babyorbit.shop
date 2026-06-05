@@ -141,13 +141,13 @@
 - **অপশনাল:** Cloudflare Pages-এ Build command `npm run build:css`, Output `/` দিলে অটো-বিল্ড হবে
 
 ### Deploy (আপনার কাজ)
-- [x] `scripts/generate-config.js` + `js/config.defaults.js` — Cloudflare build-এ `config.js` অটো
-- [x] `wrangler.toml` → `babyorbitshops` + `npm run deploy`
-- [x] `DEPLOY.md` — Cloudflare Build/Deploy কমান্ড ও env vars
-- [ ] Cloudflare: Build `npm install && npm run build`, Deploy `npx wrangler deploy`, Domains → workers.dev Enable, env `ADMIN_PASSWORD` (encrypt)
+- [x] **Cloudflare D1** — `schema.sql`, `worker-api.js`, `/api` endpoint (`D1-DEPLOY.md`)
+- [x] `apiUrl: '/api'` — Google Sheet ছাড়া same-origin API
+- [ ] D1 create + `database_id` in `wrangler.toml` + `npm run db:migrate`
+- [ ] Worker secrets: `ADMIN_PASSWORD`, `IMGBB_API_KEY`
+- [ ] Deploy + Admin seed + টেস্ট অর্ডার
 - [ ] Custom domain `babyorbit.shop`
-- [ ] Google Apps Script **নতুন Deploy** (Code.gs আপডেট হয়েছে)
-- [ ] Script Properties: `ADMIN_PASSWORD`, `CALLMEBOT_KEY`, `WHATSAPP_PHONE`
+- ~~Google Apps Script~~ → **D1** (`D1-DEPLOY.md`) — Sheet/Script আর বাধ্যতামূলক নয়
 - [ ] Admin → Settings সেভ + ডিফল্ট ডেটা সিড (প্রথমবার)
 - [ ] `sitemap.xml` / `robots.txt`-এ আসল ডোমেইন
 
