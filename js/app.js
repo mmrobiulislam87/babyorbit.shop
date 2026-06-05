@@ -1142,6 +1142,26 @@ function setQty(qty) {
 
 
 
+function showOrderForm() {
+
+  const section = document.getElementById('order-form-section');
+
+  if (section) section.classList.remove('hidden');
+
+}
+
+
+
+function hideOrderForm() {
+
+  const section = document.getElementById('order-form-section');
+
+  if (section) section.classList.add('hidden');
+
+}
+
+
+
 function selectProduct(name, price, id, variantId) {
 
   const product = PRODUCTS_BY_ID[id];
@@ -1153,6 +1173,8 @@ function selectProduct(name, price, id, variantId) {
     return;
 
   }
+
+  showOrderForm();
 
   selectedUnitPrice = price;
 
@@ -1488,6 +1510,8 @@ function bindEvents() {
 
   document.getElementById('sticky-order-btn').addEventListener('click', () => {
 
+    showOrderForm();
+
     scrollToElement('order-form-section');
 
     document.getElementById('customer-name').focus({ preventScroll: true });
@@ -1566,11 +1590,9 @@ function bindEvents() {
 
     if (!product || !productPrice) {
 
-      document.getElementById('no-product-warning').classList.remove('hidden');
+      alert('অর্ডার করতে আগে একটি পণ্য বেছে “সরাসরি অর্ডার করুন” বাটনে ক্লিক করুন।');
 
-      scrollToElement('order-form-section');
-
-      alert('অর্ডার করতে আগে উপর থেকে একটি পণ্য সিলেক্ট করুন।');
+      scrollToElement('category-sections');
 
       return;
 
@@ -1711,6 +1733,8 @@ function bindEvents() {
       document.getElementById('selected-product-box').classList.add('hidden');
 
       document.getElementById('no-product-warning').classList.remove('hidden');
+
+      hideOrderForm();
 
       document.getElementById('order-total-box').classList.add('hidden');
 
